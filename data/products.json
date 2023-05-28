@@ -1,0 +1,53 @@
+[
+	{
+		"id": "perfumeria-uno",
+        "title": "Perfume para hombre",
+        "code": "PPA",
+        "price": 450,
+        "stock":15
+
+    },
+    {
+
+        "id": "perfumeria-dos",
+        "title": "Perfume para mujer",
+        "code": "PPB",
+        "price": 500,
+		"stock": 15
+    },
+    {
+        "id": "cremas-uno",
+        "title": "Crema para el cuerpo",
+        "code": "CCA",
+        "price": 450,
+        "stock": 15
+    },
+    {
+        "id": "cremas-dos",
+        "title": "Crema para el rostro",
+        "code": "CCB",
+        "price": 2000,
+        "stock": 15
+    },
+    {
+        "id": "perfumeria-tres",
+        "title": "Desodorante spray p/hombre",
+        "code": "PPC",
+        "price": 2000,
+        "stock": 15
+    },
+    {
+        "id": "perfumeria-cuatro",
+        "title": "Desodorante spray p/mujer",
+        "code": "PPD",
+        "price": 2300,
+        "stock": 10
+    },
+    {
+        "id": "perfumeria-cinco",
+        "title": "Desodorante spray p/mujer",
+        "code": "PPE",
+        "price": 1500,
+        "stock": 5
+    }
+]
