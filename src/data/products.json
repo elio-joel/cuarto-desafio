@@ -13,54 +13,22 @@
 
     },
     {
-        "id": "perfumeria-dos",
-        "category": "Perfumeria",
-        "title": "Perfume para mujer",
-        "description": "Locion masculina de 100ml",
-        "code": "PPB",
-        "price": 500,
-        "stock": 15,
-        "status": true,
-        "thumbnails": []
-    },
-    {
         "id": "cremas-uno",
         "category": "Cremas",
         "title": "Crema corporal",
-        "description": "Locion masculina de 100ml",
+        "description": "Crema unisex con extractos de aloe vera",
         "code": "CCA",
         "price": 450,
         "stock": 15,
         "status": true,
         "thumbnails": []
     },
+    
     {
-        "id": "cremas-dos",
-        "category": "Cremas",
-        "title": "Crema para el rostro",
-        "description": "Locion masculina de 100ml",
-        "code": "CCB",
-        "price":2000,
-        "stock": 15,
-        "status": true,
-        "thumbnails": []
-    },
-    {
-        "id": "perfumeria-tres",
-        "category": "Perfumeria",
-        "title": "Desodorante spray p/hombre",
-        "description": "Locion masculina de 100ml",
-        "code": "PPC",
-        "price": 1500,
-        "stock": 15,
-        "status": true,
-        "thumbnails": []
-    },
-    {
-        "id": "perfumeria-cuatro",
+        "id": "desodorante-uno",
         "category": "Perfumeria",
         "title": "Desodorante spray p/mujer",
-        "description": "Locion masculina de 100ml",
+        "description": "Locion femenina de 100ml",
         "code": "PPD",
         "price": 1500,
         "stock": 15,
@@ -68,10 +36,10 @@
         "thumbnails": []
     },
     {
-        "id": "perfumeria-cinco",
-        "category": "Perfumeria",
-        "title": "Perfumer para ropa",
-        "description": "Locion masculina de 100ml",
+        "id": "labiales-uno",
+        "category": "Labial",
+        "title": "Labial matte",
+        "description": "Labial saborizado",
         "code": "PPE",
         "price": 1800,
         "stock": 5,
