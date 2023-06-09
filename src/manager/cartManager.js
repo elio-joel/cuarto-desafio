@@ -1,8 +1,9 @@
 import fs from 'fs';
 import shortid from 'shortid';
-import { ProductManager } from './productManager.js';
+import {productManager} from '../app.js'
+// import { ProductManager } from './productManager.js';
 
-const productManager = new ProductManager('./src/data/products.json');
+// const productManager = new ProductManager('./src/data/products.json');
 
 class CartManager {
   constructor(filePath) {

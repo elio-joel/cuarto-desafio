@@ -1,33 +1,21 @@
 import express from 'express';
-import { ProductManager } from '../manager/productManager.js';
+import productsRouter from './routes/productsRouter.js'
+import router from './routes/cartRouter.js'
+import __dirname from './utils.js'
+import { ProductManager} from './manager/productManager.js';
 
+const productManager = new ProductManager ('./data/products.json');
 
 const app = express();
-const productManager = new ProductManager('./data/products.json');
 
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.get('/products', async (req, res) => {
-    try {
-        const {limit} = req.query;
-        const products = await productManager.getProducts();
-        const limitValue = parseInt(limit) >= 0 ? parseInt(limit) : products.length;
-        res.send({products: products.slice(0, limitValue)});
-    } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
-    }
-});
-
-app.get('/products/:productId', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.productId);
-        const product = await productManager.getProductById(productId)
-        res.send({product});
-    } catch (error) {
-        res.status(404).send({status: 0, msg: error.message});
-    }
-});
+app.use('/files', express.static(__dirname + '/public'));
+app.use('/api/products', productsRouter);
+// app.use('/api/carts', router);
 
 const port = 8080;
 app.listen(port, () => console.log(`Servidor funcionando en el puerto ${port}`));
+
+export {productManager};
