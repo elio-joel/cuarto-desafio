@@ -1,0 +1,44 @@
+h1 {
+    color: rgb(62, 68, 145);
+    text-align: center;
+  }
+  
+  .cardsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    border: 1px solid #fffdfd91;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 12px;
+    margin-right: 12px;
+    flex-grow: 1;
+  }
+  
+  .card img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+  }
+  
+  .card h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .card p {
+    font-size: 12px;
+    margin-bottom: 9px;
+  }
+  
+  .card .price {
+    font-weight:bold;
+  }

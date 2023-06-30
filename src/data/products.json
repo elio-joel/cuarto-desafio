@@ -45,5 +45,16 @@
         "stock": 5,
         "status": true,
         "thumbnails": []
+    },
+    {
+        "id": "labiales-dos",
+        "category": "Labial",
+        "title": "Labial matte",
+        "description": "Labial saborizado",
+        "code": "PPF",
+        "price": 1700,
+        "stock": 5,
+        "status": true,
+        "thumbnails": []
     }
 ]

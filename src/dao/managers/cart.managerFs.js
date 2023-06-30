@@ -1,9 +1,8 @@
 import fs from 'fs';
 import shortid from 'shortid';
-import {productManager} from '../app.js'
-// import { ProductManager } from './productManager.js';
+import { ProductManager } from './product.managerFs.js';
 
-// const productManager = new ProductManager('./src/data/products.json');
+const productManager = new ProductManager('./src/data/products.json');
 
 class CartManager {
   constructor(filePath) {
@@ -69,6 +68,25 @@ class CartManager {
     await this.save();
     return cart;
   }
+
+  deleteFromCart = async (cartId, productId) => {
+    if (!shortid.isValid(cartId)) throw new Error('Invalid Cart ID');
+    await this.initialize();
+    const cart = this.carts.find((cart) => cart.id === cartId);
+    if (!cart) throw new Error('Cart not found');
+    if (!productId) throw new Error('Product ID is required');
+    if (!shortid.isValid(productId)) throw new Error('Invalid Product ID');
+    const product = cart.products.find((product) => product.productId === productId);
+    if (!product) throw new Error('Product not in cart');
+    product.qty -= 1;
+    if (product.qty <= 0) {
+      // Eliminar el producto del array de productos del carrito
+      cart.products = cart.products.filter((product) => product.productId !== productId);
+    }
+    await this.save();
+    return cart;
+  }
+
 }
 
 export { CartManager };
