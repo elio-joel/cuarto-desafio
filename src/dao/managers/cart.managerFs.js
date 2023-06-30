@@ -2,7 +2,8 @@ import fs from 'fs';
 import shortid from 'shortid';
 import { ProductManager } from './product.managerFs.js';
 
-const productManager = new ProductManager('./src/data/products.json');
+
+
 
 class CartManager {
   constructor(filePath) {
@@ -68,7 +69,10 @@ class CartManager {
     await this.save();
     return cart;
   }
+<<<<<<< HEAD:src/dao/managers/cart.managerFs.js
 
+=======
+>>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/cartManager.js
   deleteFromCart = async (cartId, productId) => {
     if (!shortid.isValid(cartId)) throw new Error('Invalid Cart ID');
     await this.initialize();

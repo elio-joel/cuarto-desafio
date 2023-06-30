@@ -1,4 +1,5 @@
 [
+<<<<<<< HEAD
   {
     "id": "Perfumeria",
     "products": [
@@ -31,3 +32,28 @@
     ]
   }
 ]
+=======
+	{
+		"id": "Perfumeria",
+		"products": [
+			{
+				"productId": "perfumeria-uno",
+				"qty": 8
+			},
+			{
+				"productId": "cremas-uno",
+				"qty": 2
+			}
+		]
+	},
+	{
+		"id": "Perfumeria",
+		"products": [
+			{
+				"productId": "desodorante-uno",
+				"qty": 20
+			}
+		]
+	}
+]
+>>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17
