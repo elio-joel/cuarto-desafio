@@ -1,75 +1,71 @@
 import express from 'express';
-<<<<<<< HEAD
-import productsRouter from './routes/productsRouter.js';
-import router from './routes/cartRouter.js';
-import __dirname from './utils/utils.js';
-import { ProductManager} from './manager/productManager.js';
-
-const productManager = new ProductManager ('./data/products.json');
-
-const app = express();
-=======
-import __dirname from './utils.js';
+import __dirname from './utils/utils.js'
 import handlebars from 'express-handlebars';
-import productsRouter from './routes/productsRouter.js'
-import cartsRouter from './routes/cartRouter.js'
+import cors from 'cors';
 import path from 'path';
-import { Server } from 'socket.io';
+import productsRouter from './routes/products.router.js'
+import cartsRouter from './routes/carts.router.js'
+import messagesRouter from './routes/messages.router.js'
 import viewsRouter from './routes/views.router.js'
-import { productsUpdated } from './socketUtils.js';
+import { Server } from 'socket.io';
+import { productsUpdated, chat } from './utils/socketUtils.js';
+import displayRoutes from 'express-routemap';
+import mongoose from 'mongoose';
+import { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME } from './utils/mongoDBConfig.js';
 
-//Express config
-const app = express()
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17
+//const
+const PORT = 8080;
 
-app.use(express.json());
+//Express middlewares
+const app = express();
+app.use(express.json())
 app.use(express.urlencoded({extended:true}));
+app.use(cors());
 
-<<<<<<< HEAD
-app.use('/files', express.static(__dirname + '/public'));
-app.use('/api/products', productsRouter);
-// app.use('/api/carts', router);
-
-const port = 8080;
-app.listen(port, () => console.log(`Servidor funcionando en el puerto ${port}`));
-
-export {productManager};
-=======
-//Handlebars config
+//Handlebars 
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
-app.use('/files', express.static(path.join(__dirname, 'public')));
+//Public folder 
+app.use('/files', express.static(path.join(__dirname, './public')));
 
-//Routes
+//Route
+app.use('/api/alive', (req, res) => {
+    res.status(200).json({ status: 1, message: 'Linea de ayuda en cosmeticos-en linea' });
+});
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/api/messages', messagesRouter);
 app.use('/', viewsRouter);
 
-const port = 8080;
-const serverHttp = app.listen(port, () => console.log(`Servidor disponible en el puerto ${port}`));
+//mongoDB-connection
+const mongo = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
+
+mongoose.connect(mongo, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => {
+    console.log(`MongoDB connection successful to ${DB_NAME} database`);
+})
+.catch(err => {
+    console.log(`Cannot connect to MongoDB ${DB_NAME} database`);
+});
+
+//Server-config
+const serverHttp = app.listen(PORT, () => {
+    displayRoutes(app);
+    console.log(`Cosmeticos Avon by Marcela esta escuchando en el puerto ${PORT}`)
+});
 
 //Socket.io config: link http server to socket.io server
 const io = new Server(serverHttp);
 
 app.set('io', io);
 
-// let messages = [];
-
 io.on('connection', socket => {
-    console.log('Tienes clientes conectados al Webiste', socket.id);
-
-    // socket.on('authenticated', data => {
-    //     socket.emit('messageLogs', messages); //solo al creador de la conexión
-    //     socket.broadcast.emit('newUserConnected', data); //a todos menos al creador de la conexión
-    // });
-
-    // socket.on('message', data => {
-    //     messages.push(data);
-    //     io.emit('messageLogs', messages); //a todos
-    // });
-
+    console.log('Nuevo cliente  en linea', socket.id);
     productsUpdated(io);
+    chat(socket, io);
 });
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17

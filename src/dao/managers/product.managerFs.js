@@ -1,11 +1,6 @@
-import fs, { existsSync } from 'fs';
+import fs from 'fs';
 import shortid from 'shortid';
-import path from 'path';
-import __dirname from '../utils.js';
-
-
 class Product {
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
     constructor({ title, description, code, price, stock, category, thumbnails }) {  
         if (!title || !description || !code || !price || stock === null || category === undefined) throw new Error('All parameters should be specified');
 
@@ -16,24 +11,10 @@ class Product {
             (typeof price !== 'string' && typeof price !== 'number') ||
             (typeof stock !== 'string' && typeof stock !== 'number') ||
             typeof category !== 'string'
-=======
-    constructor({ title, description, code, price, stock, category, thumbnails }) {        
-        if (!title || !description || !code || !price || stock === null || category === undefined) throw new Error('All parameters should be specified');
-
-        if (
-            typeof category !== 'string' ||
-            typeof title !== 'string' ||
-            typeof description !== 'string' ||
-            typeof code !== 'string' ||
-            typeof price !== 'number' ||
-            typeof stock !== 'number'
-            
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
         ) {
             throw new Error('Invalid parameter datatype');
         }
 
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
         let parsedPrice = price;
 
         if (typeof price === 'string') {
@@ -57,11 +38,6 @@ class Product {
         }  
 
         if (parsedStock < 0) throw new Error('Stock cannot be negative');
-=======
-        if (price < 0) throw new Error('El precio ni puede ser negativo');
-
-        if (stock < 0) throw new Error('El numero de stock no puede ser negativo');
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
 
         let thumbnailsArray = [];
         if (thumbnails) {
@@ -109,21 +85,13 @@ class ProductManager {
     }
     addProduct = async (newFields) => {
         await this.initialize();
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
         const allowedFields = ['title', 'description', 'code', 'price', 'stock', 'category', 'thumbnails'];
-=======
-        const allowedFields = ['category', 'title', 'description', 'code', 'price', 'stock', 'thumbnails'];
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
         const invalidFields = Object.keys(newFields).filter(field => !allowedFields.includes(field));
         if (invalidFields.length > 0) {
             throw new Error(`Campo nuevo no valido: ${invalidFields.join(', ')}`);
         }
         const { title, description, code, price, stock, category, thumbnails } = newFields;
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
         if (code && this.products.some((product) => product.code === code)) throw new Error('The specified code is in use by another existing product');
-=======
-        if (code && this.products.some((products) => products.code === code)) throw new Error('El código especificado está en uso');
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
         const newProduct = new Product({title, description, code, price, stock, category, thumbnails});
         this.products.push(newProduct);
         await this.save();
@@ -150,34 +118,20 @@ class ProductManager {
         if (!shortid.isValid(productId)) throw new Error('ID del producto no validado');
         await this.initialize();
         const index = this.products.findIndex((product) => product.id === productId);
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
-        if (index === -1) throw new Error("Product not found");
-=======
         if (index === -1) throw new Error("Producto no encontrado");
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
 
         const existingProduct = this.products[index];
         const updatedProduct = { ...existingProduct, ...updatedFields };
 
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
-        const allowedFields = ['title', 'description', 'code', 'price', 'stock', 'category', 'thumbnails'];
-=======
         const allowedFields = ['category', 'title', 'description', 'code', 'price', 'stock', 'thumbnails'];
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
         const invalidFields = Object.keys(updatedFields).filter(field => !allowedFields.includes(field));
         if (invalidFields.length > 0) {
             throw new Error(`Invalid updatable fields: ${invalidFields.join(', ')}`);
         }
 
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
-        if (updatedProduct.price < 0) throw new Error('Price cannot be negative');
-        if (updatedProduct.stock < 0) throw new Error('Stock cannot be negative');
-        if (updatedProduct.id !== productId) throw new Error('Id cannot be updated');        
-=======
         if (updatedProduct.price < 0) throw new Error('El precio no puede ser negativo');
         if (updatedProduct.stock < 0) throw new Error('El numero de stock no puede ser negativo');
         if (updatedProduct.id !== productId) throw new Error('El Id no se pudo actualizar');        
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
 
         let thumbnailsArray = [];
         if (updatedProduct.thumbnails) {
@@ -198,13 +152,6 @@ class ProductManager {
         await this.save();
         return this.products[index];
     }
-<<<<<<< HEAD:src/dao/managers/product.managerFs.js
-};
-
-export { ProductManager };
-=======
 }; 
 
-
 export { ProductManager };
->>>>>>> 3feeede5e9f6072b2fae4c443063b1a836463d17:src/manager/productManager.js
