@@ -97,6 +97,7 @@ app.use(function (err, req, res, next) {
     }
 });
 */
+
 //Server config
 const serverHttp = app.listen(PORT, () => {
     displayRoutes(app);
