@@ -3,7 +3,6 @@ import __dirname from './utils/utils.js'
 import handlebars from 'express-handlebars';
 import cors from 'cors';
 import path from 'path';
-import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import productsRouter from './routes/products.router.js'
 import cartsRouter from './routes/carts.router.js'
@@ -14,19 +13,30 @@ import { Server } from 'socket.io';
 import { productsUpdated, chat } from './utils/socketUtils.js';
 import displayRoutes from 'express-routemap';
 import mongoose from 'mongoose';
-import { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, SESSION_SECRET } from './utils/mongoDBConfig.js';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
-import flash from 'connect-flash';
+import { Command } from 'commander';
+import mongoDBConfig from './utils/mongoDBConfig.js';
+import cookieParser from 'cookie-parser';
+
+//Commander config
+const command = new Command();
+command
+    .option('-e, --env <env>', 'Environment', 'development')
+    .parse(process.argv);
+
+const options = command.opts();
+process.env.NODE_ENV = options.env;
 
 //consts
-const PORT = 8080;
+const PORT = mongoDBConfig.PORT;
 
 //Express middlewares config
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({extended:true}));
 app.use(cors());
+app.use(cookieParser());
 
 //Handlebars config
 app.engine('handlebars', handlebars.engine());
@@ -34,35 +44,22 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
 
 //mongoDB connection
-const mongo = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
+const mongo = `mongodb+srv://${mongoDBConfig.DB_USER}:${mongoDBConfig.DB_PASSWORD}@${mongoDBConfig.DB_HOST}/${mongoDBConfig.DB_NAME}`;
 
 mongoose.connect(mongo, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => {
-    console.log(`MongoDB connection successful to ${DB_NAME} database`);
+    console.log(`MongoDB connection successful to ${mongoDBConfig.DB_NAME} database`);
 })
 .catch(err => {
-    console.log(`Cannot connect to MongoDB ${DB_NAME} database`);
+    console.log(`Cannot connect to MongoDB ${mongoDBConfig.DB_NAME} database`);
 });
-
-//Session config
-app.use(session({
-    store: new MongoStore({
-        mongoUrl: mongo,
-        ttl: 3600
-    }),
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}))
 
 //Passport config
 initializePassport(passport);
-app.use(flash());
 app.use(passport.initialize());
-app.use(passport.session());
 
 //Public folder config
 app.use('/files', express.static(path.join(__dirname, './public')));

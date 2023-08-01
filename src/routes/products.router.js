@@ -2,32 +2,36 @@ import { Router } from "express";
 import { productsUpdated } from "../utils/socketUtils.js";
 import { ProductManager } from "../dao/managers/products.manager.js";
 import uploader from '../utils/multer.js';
+import { authorization } from '../utils/utils.js'
 
 const productManager = new ProductManager();
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', authorization(['admin', 'user']), async (req, res) => { 
     try {
-        const {limit} = req.query;
-        const products = await productManager.getProducts(limit);
-        res.send({status: 1, products: products});
+        console.log('get products');
+        const { limit = 10, page = 1, sort, category, available } = req.query;
+        // Get baseUrl for navigation links
+        const baseUrl = `${req.protocol}://${req.get('host')}${req.originalUrl.split('?')[0]}`;
+        const products = await productManager.getProducts(limit, page, sort, category, available, baseUrl);        
+        res.send({status: 1, ...products});
     } catch (error) {
         res.status(500).send({status: 0, msg: error.message});
     }
 });
 
-router.get('/:productsId', async (req, res) => {
+router.get('/:productId', authorization(['admin', 'user']), async (req, res) => {
     try {
         const productId = req.params.productId;
         const product = await productManager.getProductById(productId)
-        res.send({products});
+        res.send({status: 1, product: product});
     } catch (error) {
         res.status(404).send({status: 0, msg: error.message});
     }
 });
 
-router.post('/', uploader.array('thumbnails'), async (req, res) => {
+router.post('/', authorization('admin'), uploader.array('thumbnails'), async (req, res) => {
     try {
         const newProductFields = req.body;
         const files = req.files;
@@ -41,7 +45,7 @@ router.post('/', uploader.array('thumbnails'), async (req, res) => {
     }
 });
 
-router.put('/:productId', async (req, res) => {
+router.put('/:productId', authorization('admin'), async (req, res) => {
     try {
         const productId = req.params.productId;
         const updatedProductFields= req.body;
@@ -55,7 +59,7 @@ router.put('/:productId', async (req, res) => {
     }
 });
 
-router.delete('/:productId', async (req, res) => {
+router.delete('/:productId', authorization('admin'), async (req, res) => {
     try {
         const productId = req.params.productId;
         await productManager.deleteProduct(productId);

@@ -1,16 +1,30 @@
 import { Router } from "express";
 import { ProductManager } from '../dao/managers/products.manager.js';
 import { CartManager } from '../dao/managers/carts.manager.js';
+import { jwtVerify, tokenFromCookieExtractor } from '../utils/utils.js';
+import authConfig from '../utils/authConfig.js';
+import cookieParser from 'cookie-parser';
+
 const router = Router();
+router.use(cookieParser(authConfig.AUTH_SECRET));
 
 const publicAccess = (req, res, next) => {
-    if (req.session.user) return res.redirect('/products');
+    const token = tokenFromCookieExtractor(req);
+    if (token && jwtVerify(token)) {
+        return res.redirect('/products');
+    }
     next();
-}
+};
+
 const privateAccess = (req, res, next) => {
-    if (!req.session.user) return res.redirect('/login');
-    next();
-}
+    const token = tokenFromCookieExtractor(req);
+    const decodedToken = jwtVerify(token);
+    if (token && decodedToken) {
+        req.user = decodedToken.user;
+        return next();
+    }
+    res.redirect('/login');
+};
 
 router.get('/register', publicAccess, (req, res) => {
     res.render('register', {title: 'Welcome new Flowerier!!', style: 'login.css'});
@@ -25,7 +39,7 @@ router.get('/resetpassword', publicAccess, (req, res) => {
 })
 
 router.get('/', privateAccess, (req, res) => {
-    res.render('userProfile', {title: 'Flowerier profile', style: 'login.css', user: req.session.user});
+    res.render('userProfile', {title: 'Flowerier profile', style: 'login.css', user: req.user});
 })
 
 router.get('/staticProducts', privateAccess, async (req,res)=>{
@@ -49,7 +63,7 @@ router.get('/products', privateAccess, async (req,res)=>{
         const baseUrl = `${req.protocol}://${req.get('host')}${req.originalUrl.split('?')[0]}`;
         const productManager = new ProductManager();
         const products = await productManager.getProducts(limit, page, sort, category, available, baseUrl);
-        res.render('productList', {title: 'Flowery 4107 Products', style: 'productList.css', products: products, user: req.session.user});
+        res.render('productList', {title: 'Flowery 4107 Products', style: 'productList.css', products: products, user: req.user});
     } catch (error) {
         res.status(500).send(error.message);
     }
