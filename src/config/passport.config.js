@@ -26,12 +26,12 @@ const initializePassport = () => {
         try {
             const { firstName, lastName, email, birthDate, role } = req.body;
             if (username.toLowerCase() === adminConfig.ADMIN_USER.toLowerCase()) {
-                errorMsg = "Flowerier already exists";
+                errorMsg = "Data already exists";
                 return done(null, false, errorMsg );
             }
             const exists = await UsersModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
             if (exists) {
-                errorMsg = "Flowerier already exists";
+                errorMsg = "Data already exists";
                 return done(null, false, errorMsg );
             }
             const newUser = {
@@ -64,7 +64,7 @@ const initializePassport = () => {
                 }
                 userJwt = {
                     firstName: 'Admin',
-                    lastName: 'Flowerier',
+                    lastName: 'Data',
                     email: adminConfig.ADMIN_USER,
                     birthDate: '',
                     role: 'admin'
@@ -72,7 +72,7 @@ const initializePassport = () => {
             } else {
                 const user = await UsersModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
                 if (!user) {
-                    errorMsg = "Wrong flowerier";
+                    errorMsg = "Wrong Data";
                     return done(null, false, errorMsg );
                 }
                 if (!isValidPassword(user, password)) {
@@ -103,7 +103,7 @@ const initializePassport = () => {
             } else {
                 const user = await UsersModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
                 if (!user) {
-                    errorMsg = "Wrong flowerier";
+                    errorMsg = "Wrong Data";
                     return done(null, false, errorMsg );
                 }
                 const newHashedPassword = createHash(password);

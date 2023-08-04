@@ -8,11 +8,11 @@ const router = Router();
 router.use(cookieParser(authConfig.AUTH_SECRET));
 
 router.post('/register', passportCall('register'), async (req, res) => {
-    res.send({ status: 1, msg: "New flowerier registered" });
+    res.send({ status: 1, msg: "New Users registered" });
 })
 
 router.post('/login', passportCall('login', { session: false }), async (req, res) => {
-      res.cookie(authConfig.AUTH_COOKIE, req.user, { httpOnly: true }).send({ status: 1, msg: 'Flowerier successfully logged in', jwt: req.user });
+      res.cookie(authConfig.AUTH_COOKIE, req.user, { httpOnly: true }).send({ status: 1, msg: 'Users successfully logged in', jwt: req.user });
 });
 
 router.post('/resetpassword', passportCall('resetPassword'), async (req, res) => {
@@ -22,9 +22,9 @@ router.post('/resetpassword', passportCall('resetPassword'), async (req, res) =>
 router.post('/logout', (req, res) => {
     const jwtCookie = req.cookies[authConfig.AUTH_COOKIE];
     if (!jwtCookie) {
-        return res.status(400).send({ status: 0, msg: 'Flowerier is not logged in.' });
+        return res.status(400).send({ status: 0, msg: 'Users is not logged in.' });
     }    
-    res.clearCookie(authConfig.AUTH_COOKIE).send({ status: 1, msg: 'Flowerier successfully logged out' });
+    res.clearCookie(authConfig.AUTH_COOKIE).send({ status: 1, msg: 'Users successfully logged out' });
 });
 
 router.get('/github', passportCall('github', { scope: ['user:email'] }), async (req, res) => { });
@@ -34,7 +34,7 @@ router.get('/githubcallback', passportCall('github'), async (req, res) => {
 });
 
 router.get('/currentuser', passportCall('jwt', { session: false }), async (req, res) => {
-    res.send({ status: 1, msg: 'Flowerier logged in', user: req.user.user });
+    res.send({ status: 1, msg: 'Users logged in', user: req.user.user });
 });
 
 export default router;

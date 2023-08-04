@@ -66,7 +66,7 @@ app.use('/files', express.static(path.join(__dirname, './public')));
 
 //Routes
 app.use('/api/alive', (req, res) => {
-    res.status(200).json({ status: 1, message: 'Flowery 4107 backend is alive' });
+    res.status(200).json({ status: 1, message: 'Cosmeticos backend is alive' });
 });
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/products', productsRouter);
@@ -98,7 +98,7 @@ app.use(function (err, req, res, next) {
 //Server config
 const serverHttp = app.listen(PORT, () => {
     displayRoutes(app);
-    console.log(`Flowery 4107 Backend server is now up on port ${PORT}`)
+    console.log(`Cosmeticos Backend server is now up on port ${PORT}`)
 });
 
 //Socket.io config: link http server to socket.io server
