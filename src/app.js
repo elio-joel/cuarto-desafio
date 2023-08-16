@@ -1,113 +1,38 @@
+import configureCommander from './config/commander.config.js';
+import configureDotenv, { envFileName } from './config/dotenv.config.js';
+import configureMongo from './config/mongoDB.config.js';
 import express from 'express';
-import __dirname from './utils/utils.js'
-import handlebars from 'express-handlebars';
-import cors from 'cors';
-import path from 'path';
-import MongoStore from 'connect-mongo';
-import productsRouter from './routes/products.router.js'
-import cartsRouter from './routes/carts.router.js'
-import messagesRouter from './routes/messages.router.js'
-import viewsRouter from './routes/views.router.js'
-import sessionsRouter from './routes/sessions.router.js'
-import { Server } from 'socket.io';
-import { productsUpdated, chat } from './utils/socketUtils.js';
 import displayRoutes from 'express-routemap';
-import mongoose from 'mongoose';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
-import { Command } from 'commander';
-import mongoDBConfig from './utils/mongoDBConfig.js';
-import cookieParser from 'cookie-parser';
+import configureMiddlewares from './config/middlewares.config.js';
+import configureHandlebars from './config/handlebars.config.js';
+import configurePublicFolder from './config/public.config.js';
+import routes from './routes/index.js';
+import configureSocket from './config/socket.config.js';
 
-//Commander config
-const command = new Command();
-command
-    .option('-e, --env <env>', 'Environment', 'development')
-    .parse(process.argv);
+//Environment
+const env = configureCommander();
+configureDotenv(env);
 
-const options = command.opts();
-process.env.NODE_ENV = options.env;
+//MongoDB
+configureMongo();
 
-//consts
-const PORT = mongoDBConfig.PORT;
-
-//Express middlewares config
+//Application
 const app = express();
-app.use(express.json())
-app.use(express.urlencoded({extended:true}));
-app.use(cors());
-app.use(cookieParser());
-
-//Handlebars config
-app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
-app.set('view engine', 'handlebars');
-
-//mongoDB connection
-const mongo = `mongodb+srv://${mongoDBConfig.DB_USER}:${mongoDBConfig.DB_PASSWORD}@${mongoDBConfig.DB_HOST}/${mongoDBConfig.DB_NAME}`;
-
-mongoose.connect(mongo, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => {
-    console.log(`MongoDB connection successful to ${mongoDBConfig.DB_NAME} database`);
-})
-.catch(err => {
-    console.log(`Cannot connect to MongoDB ${mongoDBConfig.DB_NAME} database`);
-});
-
-//Passport config
+configureMiddlewares(app);
+configureHandlebars(app);
 initializePassport(passport);
 app.use(passport.initialize());
+configurePublicFolder(app);
+routes(app);
 
-//Public folder config
-app.use('/files', express.static(path.join(__dirname, './public')));
-
-//Routes
-app.use('/api/alive', (req, res) => {
-    res.status(200).json({ status: 1, message: 'Cosmeticos backend is alive' });
-});
-app.use('/api/sessions', sessionsRouter);
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
-app.use('/api/messages', messagesRouter);
-app.use('/', viewsRouter);
-
-//Error handling
-/*
-app.use(function (err, req, res, next) {
-    var responseData;
-    if (err) {
-        res.status(400);
-        responseData = {
-            statusText: 'Bad Request',
-            jsonSchemaValidation: true,
-            validations: err
-        };
-        if (req.xhr || req.get('Content-Type') === 'application/json') {
-            res.json(responseData);
-        }
-    } else {
-        // pass error to next error middleware handler
-        next(err);
-    }
-});
-*/
+const PORT = process.env.PORT;
 
 //Server config
 const serverHttp = app.listen(PORT, () => {
     displayRoutes(app);
-    console.log(`Cosmeticos Backend server is now up on port ${PORT}`)
+    console.log(`MarcelaBeauty Server is now up on port ${PORT} in ${env} mode using ${envFileName} file`)
 });
 
-//Socket.io config: link http server to socket.io server
-const io = new Server(serverHttp);
-
-app.set('io', io);
-
-io.on('connection', socket => {
-    console.log('New client connected', socket.id);
-    productsUpdated(io);
-    chat(socket, io);
-});
+configureSocket(serverHttp, app);

@@ -2,7 +2,7 @@
   "name": "nuevo-intento",
   "version": "1.0.0",
   "description": "Linea de ventas de comsmeticos",
-  "main": "./src/app.js",
+  "main": "/src/app.js",
   "type": "module",
   "scripts": {
     "test": "nodemon ./test/productManagerTest.js",

@@ -2,11 +2,10 @@ import { Router } from "express";
 import { ProductManager } from '../dao/managers/products.manager.js';
 import { CartManager } from '../dao/managers/carts.manager.js';
 import { jwtVerify, tokenFromCookieExtractor } from '../utils/utils.js';
-import authConfig from '../utils/authConfig.js';
 import cookieParser from 'cookie-parser';
 
 const router = Router();
-router.use(cookieParser(authConfig.AUTH_SECRET));
+router.use(cookieParser(process.env.AUTH_SECRET));
 
 const publicAccess = (req, res, next) => {
     const token = tokenFromCookieExtractor(req);

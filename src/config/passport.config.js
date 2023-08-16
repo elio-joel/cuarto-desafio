@@ -2,17 +2,14 @@ import passport from "passport";
 import local from "passport-local";
 import UsersModel from "../dao/models/users.model.js";
 import { createHash, isValidPassword, tokenFromCookieExtractor } from "../utils/utils.js";
-import adminConfig from "../utils/adminConfig.js";
 import GitHubStrategy from "passport-github2";
-import githubConfig from "../utils/githubConfig.js";
-import authConfig from '../utils/authConfig.js';
 import jwt from 'passport-jwt';
 import { default as token } from 'jsonwebtoken';
 
 // JWT
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
-export const generateToken = user => token.sign({ user }, authConfig.AUTH_SECRET, { expiresIn: '1d' })
+export const generateToken = user => token.sign({ user }, process.env.AUTH_SECRET, { expiresIn: '1d' })
 
 //Local
 const LocalStrategy = local.Strategy;
@@ -25,7 +22,7 @@ const initializePassport = () => {
         let errorMsg;
         try {
             const { firstName, lastName, email, birthDate, role } = req.body;
-            if (username.toLowerCase() === adminConfig.ADMIN_USER.toLowerCase()) {
+            if (username.toLowerCase() === process.env.ADMIN_USER.toLowerCase()) {
                 errorMsg = "Data already exists";
                 return done(null, false, errorMsg );
             }
@@ -57,15 +54,15 @@ const initializePassport = () => {
         let errorMsg;
         try {
             let userJwt;
-            if (username.toLowerCase() === adminConfig.ADMIN_USER.toLowerCase()) {
-                if (password !== adminConfig.ADMIN_PASSWORD) {
+            if (username.toLowerCase() === process.env.ADMIN_USER.toLowerCase()) {
+                if (password !== process.env.ADMIN_PASSWORD) {
                     errorMsg = "Password is incorrect";
                     return done(null, false, errorMsg );
                 }
                 userJwt = {
                     firstName: 'Admin',
                     lastName: 'Data',
-                    email: adminConfig.ADMIN_USER,
+                    email: process.env.ADMIN_USER,
                     birthDate: '',
                     role: 'admin'
                 };
@@ -97,7 +94,7 @@ const initializePassport = () => {
     }, async (req, username, password, done) => {
         let errorMsg;
         try {
-            if (username.toLowerCase() === adminConfig.ADMIN_USER.toLowerCase()) {
+            if (username.toLowerCase() === process.env.ADMIN_USER.toLowerCase()) {
                 errorMsg = "Admin password cannot be reset";
                 return done(null, false, errorMsg );
             } else {
@@ -117,8 +114,8 @@ const initializePassport = () => {
     }));
 
     passport.use('github', new GitHubStrategy({
-        clientID: githubConfig.CLIENT_ID,
-        clientSecret: githubConfig.CLIENT_SECRET,
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
     }, async (accessToken, refreshToken, profile, done) => {
         try {
@@ -143,7 +140,7 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([tokenFromCookieExtractor]),
-        secretOrKey: authConfig.AUTH_SECRET
+        secretOrKey: process.env.AUTH_SECRET
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload);
