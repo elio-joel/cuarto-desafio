@@ -46,7 +46,7 @@ class Product {
             } else if (Array.isArray(thumbnails)) {
                 thumbnailsArray = thumbnails;
             } else {
-                throw new Error('Las miniaturas deben ser una cadena o una matriz de cadenas');
+                throw new Error('Thumbnails must be a string or an array of strings');
             }
         }
 
@@ -64,16 +64,15 @@ class Product {
 
 class ProductManager {
     constructor(filePath) {
-        this.filePath = path.resolve (__dirname, filePath);
+        this.filePath = filePath;
         this.products = [];
-        this.getProducts();
     }
     initialize = async () => {
         if(fs.existsSync(this.filePath)) {
             const data = await fs.promises.readFile(this.filePath, 'utf8');
             this.products = JSON.parse(data);
         } else {
-            this.products = ["Si se lee este mensaje es que hay un problema"];
+            this.products = [];
         }
     }
     save = async () => {
@@ -88,7 +87,7 @@ class ProductManager {
         const allowedFields = ['title', 'description', 'code', 'price', 'stock', 'category', 'thumbnails'];
         const invalidFields = Object.keys(newFields).filter(field => !allowedFields.includes(field));
         if (invalidFields.length > 0) {
-            throw new Error(`Campo nuevo no valido: ${invalidFields.join(', ')}`);
+            throw new Error(`Invalid new fields: ${invalidFields.join(', ')}`);
         }
         const { title, description, code, price, stock, category, thumbnails } = newFields;
         if (code && this.products.some((product) => product.code === code)) throw new Error('The specified code is in use by another existing product');
@@ -98,40 +97,40 @@ class ProductManager {
         return newProduct;
     }
     getProductById = async (productId) => {
-        if (!shortid.isValid(productId)) throw new Error('ID del producto no valido');
+        if (!shortid.isValid(productId)) throw new Error('Invalid Product ID');
         await this.initialize();
         const returnProduct = this.products.find((product) => product.id === productId);
-        if(!returnProduct) throw new Error("El producto no encontrado");
+        if(!returnProduct) throw new Error("Product not found");
         return returnProduct;
-    } 
+    }
     deleteProduct = async (productId) => {
-        if (!shortid.isValid(productId)) throw new Error('ID del producto no validado');
+        if (!shortid.isValid(productId)) throw new Error('Invalid Product ID');
         await this.initialize();
-        const index = this.products.findIndex((products) => products.id === productId);
+        const index = this.products.findIndex((product) => product.id === productId);
         if (index === -1) {
-            throw new Error("Producto no encontrado");
+            throw new Error("Product not found");
         }
         this.products.splice(index, 1);
         await this.save();
     }
     updateProduct = async (productId, updatedFields) => {
-        if (!shortid.isValid(productId)) throw new Error('ID del producto no validado');
+        if (!shortid.isValid(productId)) throw new Error('Invalid Product ID');
         await this.initialize();
         const index = this.products.findIndex((product) => product.id === productId);
-        if (index === -1) throw new Error("Producto no encontrado");
+        if (index === -1) throw new Error("Product not found");
 
         const existingProduct = this.products[index];
         const updatedProduct = { ...existingProduct, ...updatedFields };
 
-        const allowedFields = ['category', 'title', 'description', 'code', 'price', 'stock', 'thumbnails'];
+        const allowedFields = ['title', 'description', 'code', 'price', 'stock', 'category', 'thumbnails'];
         const invalidFields = Object.keys(updatedFields).filter(field => !allowedFields.includes(field));
         if (invalidFields.length > 0) {
             throw new Error(`Invalid updatable fields: ${invalidFields.join(', ')}`);
         }
 
-        if (updatedProduct.price < 0) throw new Error('El precio no puede ser negativo');
-        if (updatedProduct.stock < 0) throw new Error('El numero de stock no puede ser negativo');
-        if (updatedProduct.id !== productId) throw new Error('El Id no se pudo actualizar');        
+        if (updatedProduct.price < 0) throw new Error('Price cannot be negative');
+        if (updatedProduct.stock < 0) throw new Error('Stock cannot be negative');
+        if (updatedProduct.id !== productId) throw new Error('Id cannot be updated');        
 
         let thumbnailsArray = [];
         if (updatedProduct.thumbnails) {
@@ -144,6 +143,7 @@ class ProductManager {
             }
             updatedProduct.thumbnails = thumbnailsArray;
         }
+
         if (updatedFields.code && updatedFields.code !== existingProduct.code && this.products.some((product) => product.code === updatedProduct.code && product.id !== updatedProduct.id )) {
             throw new Error('The specified code is in use by another existant product');
         }
@@ -152,6 +152,6 @@ class ProductManager {
         await this.save();
         return this.products[index];
     }
-}; 
+};
 
 export { ProductManager };

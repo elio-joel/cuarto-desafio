@@ -1,7 +1,7 @@
 {
   "name": "nuevo-intento",
   "version": "1.0.0",
-  "description": "Linea de ventas de comsmeticos",
+  "description": "MarcelaBeauty",
   "main": "/src/app.js",
   "type": "module",
   "scripts": {

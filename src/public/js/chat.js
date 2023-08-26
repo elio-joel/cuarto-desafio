@@ -7,26 +7,24 @@ socket.on('newUserConnected', data => {
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: `${data} se ha unido al chat`,
+        title: `${data.email} se ha unido al chat`,
         showConfirmButton: false,
         timer: 10000
     })
 });
 
-Swal.fire({
-    title: 'Bienvenido, gracias por tu visita!',
-    input: 'text',
-    text: 'Ingresa el usuario con el que te vas a idetificar en el chat',
-    inputValidator: (value) => {
-        return !value && 'Ingrese su usuario para continuar!'
-    },
-    allowOutsideClick: false
-}).then((result) => {
-    user = result.value;
+fetch('/api/sessions/currentuser')
+  .then(response => response.json())
+  .then(data => {
+    user = data.user; // Supongo que el usuario se encuentra en el campo 'user'
     let title = document.getElementById('title');
-    title.innerHTML = `Bienvenido ${user} a HelpChat de Cosmeticos!`;
+    title.innerHTML = `Bienvenido ${user} a HelpChat de MarcelaBeauty!`;
+    // Emitir el evento 'authenticated' con el usuario al servidor
     socket.emit('authenticated', user);
-});    
+  })
+  .catch(error => {
+    console.error('Error fetching current user:', error);
+  });   
 
 chatbox.addEventListener('keyup', evt => {
     if (evt.key === "Enter") {

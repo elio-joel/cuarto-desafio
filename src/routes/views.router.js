@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { ProductManager } from '../dao/managers/products.manager.js';
-import { CartManager } from '../dao/managers/carts.manager.js';
 import { jwtVerify, tokenFromCookieExtractor } from '../utils/utils.js';
 import cookieParser from 'cookie-parser';
+import viewsController from "../controllers/views.controller.js";
 
 const router = Router();
 router.use(cookieParser(process.env.AUTH_SECRET));
@@ -25,58 +24,22 @@ const privateAccess = (req, res, next) => {
     res.redirect('/login');
 };
 
-router.get('/register', publicAccess, (req, res) => {
-    res.render('register', {title: 'Welcome new Users!!', style: 'login.css'});
-})
+router.get('/register', publicAccess, viewsController.register);
 
-router.get('/login', publicAccess, (req, res) => {
-    res.render('login', {title: 'Hello Users!!', style: 'login.css'});
-})
+router.get('/login', publicAccess, viewsController.login);
 
-router.get('/resetpassword', publicAccess, (req, res) => {
-    res.render('resetPassword', {title: 'Hello Users!! Lets recover your password', style: 'login.css'});
-})
+router.get('/resetpassword', publicAccess, viewsController.resetPassword);
 
-router.get('/', privateAccess, (req, res) => {
-    res.render('userProfile', {title: 'Users profile', style: 'login.css', user: req.user});
-})
+router.get('/', privateAccess, viewsController.userProfile);
 
-router.get('/staticProducts', privateAccess, async (req,res)=>{
-    const productManager = new ProductManager();
-    const products = await productManager.getProducts();
-    res.render('home', {title: 'Cosmeticos Products', style: 'product.css', products: products});
-})
+router.get('/staticProducts', privateAccess, viewsController.staticProducts);
 
-router.get('/realtimeproducts', privateAccess, (req,res)=>{
-    res.render('realTimeProducts', {title: 'Cosmeticos Products', style: 'productList.css'});
-})
+router.get('/realtimeproducts', privateAccess, viewsController.realTimeProducts);
 
-router.get('/webchat', (req,res)=>{
-    res.render('chat', { style: 'chat.css', title: 'Cosmeticos Webchat'});
-})
+router.get('/webchat', privateAccess, viewsController.webchat);
 
-router.get('/products', privateAccess, async (req,res)=>{
-    try {
-        const { limit = 10, page = 1, sort, category, available } = req.query;
-        // Get baseUrl for navigation links
-        const baseUrl = `${req.protocol}://${req.get('host')}${req.originalUrl.split('?')[0]}`;
-        const productManager = new ProductManager();
-        const products = await productManager.getProducts(limit, page, sort, category, available, baseUrl);
-        res.render('productList', {title: 'Cosmeticos Products', style: 'productList.css', products: products, user: req.user});
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-})
+router.get('/products', privateAccess, viewsController.products);
 
-router.get('/carts/:cartId', privateAccess, async (req,res)=>{
-    try {
-        const cartId = req.params.cartId;
-        const cartManager = new CartManager();
-        const cart = await cartManager.getCart(cartId);
-        res.render('cart', {title: 'Cosmeticos Cart', style: 'cart.css', cart: cart});
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-})
+router.get('/carts/:cartId', privateAccess, viewsController.carts);
 
 export default router;

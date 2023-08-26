@@ -1,17 +1,45 @@
 import ProductsModel from '../models/products.model.js';
 
-class ProductManager {
+class ProductMongoManager {
   constructor() {
     this.productsModel = ProductsModel;
   }
 
-  getProducts = async (limit = null ) => {
+  getProducts = async (limit = 10, page = 1, sort, category, available) => {
     try {
       let query = this.productsModel.find();
-      if (limit) {
-        query = query.limit(parseInt(limit));
+      if (category) {
+        const trimmedCategory = category.trim();
+        const categoryRegex = new RegExp(`^${trimmedCategory}$`, 'i');
+        query = query.where('category').equals(categoryRegex);
       }
-      const products = await query.exec();
+      if (available) {
+        const lowerAvailable = available.toLowerCase();
+        if (lowerAvailable  === 'true') {
+          query = query.where('stock').gt(0);
+        } else {
+          query = query.where('stock').equals(0);
+        }
+      }
+      if (sort) {
+        const lowerSort = sort.toLowerCase();
+        if (lowerSort === 'asc') {
+          query = query.sort({ price: 1 });
+        } else {
+          query = query.sort({ price: -1 });
+        }
+      }
+
+      const products = await this.productsModel.paginate(query, {
+        limit: parseInt(limit) || 10,
+        lean: true,
+        page: parseInt(page) || 1,
+        customLabels: {
+          docs: 'products',
+          totalDocs: 'totalProducts',
+        }
+      });
+
       return products;
     } catch (error) {
       throw new Error(`Failed to retrieve: ${error.message}`);
@@ -30,15 +58,21 @@ class ProductManager {
   getProductById = async (productId) => {
     try {
       const product = await this.productsModel.findById(productId);
-      if (!product) {
-        throw new Error('Product not found');
-      }
       return product;
     } catch (error) {
       throw new Error(`Failed to retrieve product: ${error.message}`);
     }
   }
 
+  getProductByCode = async (productCode) => {
+    try {
+      const product = await this.productsModel.findOne({ code: productCode });
+      return product;
+    } catch (error) {
+      throw new Error(`Failed to retrieve product: ${error.message}`);
+    }
+  }
+  
   deleteProduct = async (productId) => {
     try {
       const product = await this.productsModel.findByIdAndDelete(productId);
@@ -53,14 +87,6 @@ class ProductManager {
   updateProduct = async (productId, updatedFields) => {
     try {
       const { code, price, stock, thumbnails, ...otherFields } = updatedFields;
-
-      if (code) {
-        const existingProduct = await this.productsModel.findOne({ code: code });
-        if (existingProduct && existingProduct._id.toString() !== productId) {
-          throw new Error('The specified code is in use by another existing product');
-        }
-      }
-
       const updatedProduct = await this.productsModel.findByIdAndUpdate(
         productId,
         {
@@ -78,7 +104,7 @@ class ProductManager {
       if (!updatedProduct) {
         throw new Error('Product not found');
       }
-
+  
       return updatedProduct;
 
     } catch (error) {
@@ -87,4 +113,4 @@ class ProductManager {
   }
 }
 
-export { ProductManager };
+export default ProductMongoManager;

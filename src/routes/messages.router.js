@@ -1,27 +1,11 @@
 import { Router } from 'express';
-import { MessagesManager } from '../dao/managers/messages.manager.js';
-
-const MessageManager = new MessagesManager();
+import { authorization } from '../utils/utils.js'
+import messageController from '../controllers/messages.controller.js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-    try {
-        const messages = await messageManager.getMessages();
-        res.send({status: 1, messages: messages});
-    } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
-    }
-});
+router.get('/', authorization(['admin', 'user']), messageController.getMessages);
 
-router.post('/', async (req, res) => {
-    try {
-        const { user, message } = req.body;
-        const newMessage = await messageManager.addMessage(user, message);
-        res.send({status: 1, msg: 'Message added successfully', message: newMessage});
-    } catch (error) {
-        res.status(500).send({status: 0, msg: error.message});
-    }
-});
+router.post('/', authorization(['user']), messageController.postMessage);
 
 export default router;

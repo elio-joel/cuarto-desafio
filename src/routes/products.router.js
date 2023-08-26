@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { productsUpdated } from "../utils/socketUtils.js";
-import { ProductManager } from "../dao/managers/products.manager.js";
+import { ProductManager } from "../dao/mongoManagers/products.manager.js";
 import uploader from '../utils/multer.js';
 import { authorization } from '../utils/utils.js'
 

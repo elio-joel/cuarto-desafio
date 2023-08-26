@@ -5,6 +5,7 @@ import { createHash, isValidPassword, tokenFromCookieExtractor } from "../utils/
 import GitHubStrategy from "passport-github2";
 import jwt from 'passport-jwt';
 import { default as token } from 'jsonwebtoken';
+import UserDTO from "../dto/users.dto.js";
 
 // JWT
 const JWTStrategy = jwt.Strategy;
@@ -23,12 +24,12 @@ const initializePassport = () => {
         try {
             const { firstName, lastName, email, birthDate, role } = req.body;
             if (username.toLowerCase() === process.env.ADMIN_USER.toLowerCase()) {
-                errorMsg = "Data already exists";
+                errorMsg = "User already exists";
                 return done(null, false, errorMsg );
             }
             const exists = await UsersModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
             if (exists) {
-                errorMsg = "Data already exists";
+                errorMsg = "User already exists";
                 return done(null, false, errorMsg );
             }
             const newUser = {
@@ -40,7 +41,8 @@ const initializePassport = () => {
                 role,
             };
             const user = await UsersModel.create(newUser);
-            return done(null, user);
+            const userDTO = new UserDTO(user);
+            return done(null, userDTO);
         } catch (error) {
             errorMsg = error.message;
             return done( errorMsg );
@@ -61,7 +63,7 @@ const initializePassport = () => {
                 }
                 userJwt = {
                     firstName: 'Admin',
-                    lastName: 'Data',
+                    lastName: 'User',
                     email: process.env.ADMIN_USER,
                     birthDate: '',
                     role: 'admin'
@@ -69,15 +71,15 @@ const initializePassport = () => {
             } else {
                 const user = await UsersModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
                 if (!user) {
-                    errorMsg = "Wrong Data";
+                    errorMsg = "Wrong User";
                     return done(null, false, errorMsg );
                 }
                 if (!isValidPassword(user, password)) {
                     errorMsg = "Password is incorrect";
                     return done(null, false, errorMsg );
                 }
-                const { password: pass, _id, __v, ...userBrief } = user._doc;
-                userJwt = userBrief;
+                const userDTO = new UserDTO(user);
+                userJwt = userDTO;
             }
             const jwt = generateToken(userJwt);
             return done(null, jwt);            
@@ -100,12 +102,13 @@ const initializePassport = () => {
             } else {
                 const user = await UsersModel.findOne({ email: { $regex: new RegExp(`^${username}$`, 'i') } });
                 if (!user) {
-                    errorMsg = "Wrong Data";
+                    errorMsg = "Wrong User";
                     return done(null, false, errorMsg );
                 }
                 const newHashedPassword = createHash(password);
                 await UsersModel.updateOne({ _id: user._id }, { $set: { password: newHashedPassword } });
-                return done(null, user);
+                const userDTO = new UserDTO(user);                
+                return done(null, userDTO);
             }
         } catch (error) {
             errorMsg = error.message;
@@ -128,10 +131,9 @@ const initializePassport = () => {
                     password: '',
                 }
                 user = await UsersModel.create(user);
-                console.log('user', user);
             }
-            const { password, _id, __v, ...userBrief } = user._doc;
-            const jwt = generateToken(userBrief);            
+            const userDTO = new UserDTO(user);
+            const jwt = generateToken(userDTO);            
             return done(null, jwt);
         } catch (error) {
             return done( 'Github login failure' );
@@ -143,7 +145,8 @@ const initializePassport = () => {
         secretOrKey: process.env.AUTH_SECRET
     }, async (jwt_payload, done) => {
         try {
-            return done(null, jwt_payload);
+            const user = jwt_payload.user;
+            return done(null, user);
         } catch (error) {
             done(error);
         }
