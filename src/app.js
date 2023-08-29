@@ -4,7 +4,7 @@ import configureMongo from './config/mongoDB.config.js';
 import express from 'express';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
-import configureMiddlewares from './config/middlewares.config.js';
+import { configureMiddlewares , configurePostMiddlewares} from './config/middlewares.config.js';
 import configureHandlebars from './config/handlebars.config.js';
 import configurePublicFolder from './config/public.config.js';
 import routes from './routes/index.js';
@@ -28,7 +28,6 @@ configurePublicFolder(app);
 routes(app);
 
 const PORT = process.env.PORT;
-
 //Server config
 const serverHttp = app.listen(PORT, () => {
     displayRoutes(app);
@@ -36,3 +35,5 @@ const serverHttp = app.listen(PORT, () => {
 });
 
 configureSocket(serverHttp, app);
+
+configurePostMiddlewares(app);
