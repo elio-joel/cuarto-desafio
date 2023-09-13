@@ -1,6 +1,6 @@
 import ProductsModel from '../models/products.model.js';
 import EnumErrors from '../../utils/errorHandler/enum.js';
-import FloweryCustomError from '../../utils/errorHandler/FloweryCustomError.js';
+import CustomError from '../../utils/errorHandler/customError.js';
 
 class ProductMongoManager {
   constructor() {
@@ -44,7 +44,7 @@ class ProductMongoManager {
 
       return products;
     } catch (error) {
-      FloweryCustomError.createError({
+      CustomError.createError({
         name: 'getProducts Error',
         message: `Failed to retrieve: ${error.message}`,
         type: EnumErrors.DATABASE_ERROR.type,
@@ -58,7 +58,7 @@ class ProductMongoManager {
       const newProduct = await this.productsModel.create(newFields);
       return newProduct;
     } catch (error) {
-      FloweryCustomError.createError({
+      CustomError.createError({
         name: 'addProduct Error',
         message: `Failed to add product: ${error.message}`,
         type: EnumErrors.DATABASE_ERROR.type,
@@ -72,7 +72,7 @@ class ProductMongoManager {
       const product = await this.productsModel.findById(productId);
       return product;
     } catch (error) {
-      FloweryCustomError.createError({
+      CustomError.createError({
         name: 'getProductById Error',
         message: `Failed to retrieve: ${error.message}`,
         type: EnumErrors.DATABASE_ERROR.type,
@@ -86,7 +86,7 @@ class ProductMongoManager {
       const product = await this.productsModel.findOne({ code: productCode });
       return product;
     } catch (error) {
-      FloweryCustomError.createError({
+      CustomError.createError({
         name: 'getProductByCode Error',
         message: `Failed to retrieve: ${error.message}`,
         type: EnumErrors.DATABASE_ERROR.type,
@@ -99,7 +99,7 @@ class ProductMongoManager {
     try {
       const product = await this.productsModel.findByIdAndDelete(productId);
       if (!product) {
-        FloweryCustomError.createError({
+        CustomError.createError({
           name: 'deleteProduct Error',
           message: 'Product not found',
           type: EnumErrors.DATABASE_ERROR.type,
@@ -107,7 +107,7 @@ class ProductMongoManager {
         });        
       }
     } catch (error) {
-      FloweryCustomError.createError({
+      CustomError.createError({
         name: 'deleteProduct Error',
         message: `Failed to delete product: ${error.message}`,
         type: EnumErrors.DATABASE_ERROR.type,
@@ -134,7 +134,7 @@ class ProductMongoManager {
       );
 
       if (!updatedProduct) {
-        FloweryCustomError.createError({
+        CustomError.createError({
           name: 'updateProduct Error',
           message: 'Product not found',
           type: EnumErrors.DATABASE_ERROR.type,
@@ -145,7 +145,7 @@ class ProductMongoManager {
       return updatedProduct;
 
     } catch (error) {
-      FloweryCustomError.createError({
+      CustomError.createError({
         name: 'deleteProduct Error',
         message: `Failed to update product: ${error.message}`,
         type: EnumErrors.DATABASE_ERROR.type,

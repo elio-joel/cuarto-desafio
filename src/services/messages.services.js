@@ -69,4 +69,4 @@ class MessageService {
         }
     }
 
-export { MessageService }
+export default MessageService ;

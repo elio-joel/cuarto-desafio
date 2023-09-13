@@ -1,5 +1,5 @@
 import { ProductService } from '../services/products.services.js';
-import { MessageService } from '../services/messages.services.js';
+import  MessageService  from '../services/messages.services.js';
 
 const productsUpdated = async (io) => {
     const productsServices = new ProductService();

@@ -10,12 +10,13 @@ import configurePublicFolder from './config/public.config.js';
 import routes from './routes/index.js';
 import configureSocket from './config/socket.config.js';
 import displayRoutes from 'express-routemap';
+import { MBeautyLogger } from './utils/logger.js';
 
-//Environment
+//ENVIRONMENT
 const env = configureCommander();
 configureDotenv(env);
 
-//MongoDB
+//MONGODB
 configureMongo();
 
 //Application
@@ -31,9 +32,11 @@ const PORT = process.env.PORT;
 //Server config
 const serverHttp = app.listen(PORT, () => {
     displayRoutes(app);
-    console.log(`MarcelaBeauty Server is now up on port ${PORT} in ${env} mode using ${envFileName} file`)
+    MBeautyLogger('info', `MarcelaBeauty is now up on port ${PORT} in ${env} mode using ${envFileName} file`);
 });
 
 configureSocket(serverHttp, app);
 
 configurePostMiddlewares(app);
+
+// const PORT = 8080;
