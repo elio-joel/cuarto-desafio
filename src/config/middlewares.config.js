@@ -4,6 +4,10 @@ import cookieParser from 'cookie-parser';
 import compression from 'express-compression';
 import errorHandler from '../utils/errorHandler/errorHandler.js'
 import { MBeautyRequestLogger } from '../utils/logger.js';
+import { default as jwt } from 'jsonwebtoken';
+import { th } from '@faker-js/faker';
+
+
 
 export function configureMiddlewares(app) {
   app.use(express.json());
@@ -22,3 +26,25 @@ export function configureMiddlewares(app) {
 export function configurePostMiddlewares(app) {
   app.use(errorHandler);
 }
+
+export const validateResetPasswordToken = (redirectOnError = false) => {
+  return (req, res, next) => {
+      try {
+          const token = req.params.token;
+          jwt.verify(token, process.env.AUTH_SECRET);
+          const data = jwt.decode(token);
+          req.email = data.email;
+          req.token = token;
+          next();
+      } catch (error) {
+          if (redirectOnError) {
+              res.redirect('/resetPasswordRequest');
+          } else {
+              throw error;
+          }
+      }
+  };
+};
+
+
+
