@@ -69,7 +69,7 @@ class CartService {
         }
     }
 
-    addToCart = async (cartId, productId) => {
+    addToCart = async (cartId, productId, user) => {
         try {
             let stockControl = 0;
             const cart = await this.cartRepository.getCartById(cartId);
@@ -99,6 +99,19 @@ class CartService {
                     recievedParams: { productId },
                     statusCode: EnumErrors.NOT_FOUND_ENTITY_ID_ERROR.statusCode
                 });                    
+            }
+            if (user) {
+                if (user.role === 'premium') {
+                    if (product.owner.toLowerCase() === user.email.toLowerCase()) {
+                        FloweryCustomError.createError({
+                            name: 'addToCart Error',
+                            message: 'You cannot add your own products to cart',                    
+                            type: EnumErrors.BUSSINESS_RULES_ERROR.type,
+                            recievedParams: { productId },
+                            statusCode: EnumErrors.BUSSINESS_RULES_ERROR.statusCode
+                        });
+                    }
+                }
             }
             const existingProduct = cart.products.find((product) => product.product._id.toString() === productId);
             if (existingProduct) {
@@ -237,7 +250,7 @@ class CartService {
         }
     }
 
-    addProductsToCart = async (cartId, products) => {
+    addProductsToCart = async (cartId, products, user) => {
         try {
             const cart = await this.cartRepository.getCartById(cartId);
             if (!cart) {
@@ -288,6 +301,19 @@ class CartService {
                         statusCode: EnumErrors.NOT_FOUND_ENTITY_ID_ERROR.statusCode
                     });                    
                 }
+                if (user) {
+                    if (user.role === 'premium') {
+                        if (product.owner.toLowerCase() === user.email.toLowerCase()) {
+                            FloweryCustomError.createError({
+                                name: 'addProductsToCart Error',
+                                message: 'You cannot add your own products to cart',                    
+                                type: EnumErrors.BUSSINESS_RULES_ERROR.type,
+                                recievedParams: { productId },
+                                statusCode: EnumErrors.BUSSINESS_RULES_ERROR.statusCode
+                            });
+                        }
+                    }
+                }
                 if (existingProducts.includes(productId)) {
                     const existingProduct = cart.products.find((product) => product.product._id.toString() === productId);
                     existingProduct.quantity += quantity;
@@ -308,7 +334,7 @@ class CartService {
             });                    
         }
     }
-
+//
     checkoutCart = async (cartId, purchaser) => {
         try {
             const cart = await this.cartRepository.getCartById(cartId);

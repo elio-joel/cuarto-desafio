@@ -19,7 +19,7 @@ configureDotenv(env);
 //MONGODB
 configureMongo();
 
-//Application
+//App
 const app = express();
 configureMiddlewares(app);
 configureHandlebars(app);

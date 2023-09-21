@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 const { Schema } = mongoose;
 
 export const productsCollection = 'products'
@@ -45,8 +46,12 @@ const productsSchema = new Schema({
   thumbnails: {
     type: [String],
     default: []
-  }}
-);
+  },
+  owner: {
+    type: [String],
+    default: 'admin'
+  },
+});
 
 
 const ProductsModel = mongoose.model(productsCollection, productsSchema);

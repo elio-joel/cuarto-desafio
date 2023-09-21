@@ -5,9 +5,11 @@ form.addEventListener('submit',async (e)=>{
     const data = new FormData(form);
     const obj = {};
     data.forEach((value,key)=>obj[key]=value);
-    const response = await fetch('/api/sessions/resetpassword', {
-        method:'POST',
-        body:JSON.stringify(obj),
+    const { email, newPassword } = obj;
+    const newObj = { email, newPassword };
+    const response = await fetch(`/api/sessions/resetpassword/${obj.token}`, {
+        method:'PUT',
+        body:JSON.stringify(newObj),
         headers:{
             'Content-Type':'application/json'
         }
