@@ -50,10 +50,10 @@ const addProduct = async (req, res, next) => {
       newProductFields.thumbnails = [];
     }
     const newProduct = await productService.addProduct(newProductFields);
-    productsUpdated(req.app.get("io"));
+    productsUpdated(req.app.get('io'));
     res.send({
       status: 1,
-      msg: "Product added successfully",
+      msg: "Product added ",
       product: newProduct,
     });
   } catch (error) {
@@ -75,7 +75,7 @@ const updateProductById = async (req, res, next) => {
     productsUpdated(req.app.get('io'));
     res.send({
       status: 1,
-      msg: "Product updated successfully",
+      msg: "Product updated ",
       product: updatedProduct,
     });
   } catch (error) {
@@ -88,7 +88,7 @@ const deleteProductById = async (req, res, next) => {
     const productId = req.params.productId;
     await productService.deleteProduct(productId);
     productsUpdated(req.app.get('io'));
-    res.send({ status: 1, msg: "Product deleted successfully" });
+    res.send({ status: 1, msg: "Product deleted " });
   } catch (error) {
     next(error);
   }

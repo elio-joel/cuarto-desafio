@@ -5,9 +5,11 @@
   "main": "/src/app.js",
   "type": "module",
   "scripts": {
-    "test": "nodemon ./test/productManagerTest.js",
-    "start": "nodemon ./src/app.js",
-    "start:dev": "cross-env NODE_ENV=development nodemon ./src/app.js"
+  "test": "node ./src/test/productManagerTest.js",
+  "start": "nodemon ./src/app.js",
+  "start:dev": "cross-env NODE_ENV=dev nodemon ./src/app.js",
+  "start:qa": "cross-env NODE_ENV=qa nodemon ./src/app.js",
+  "start:prod": "cross-env NODE_ENV=prod nodemon ./src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -39,11 +41,17 @@
     "passport-local": "^1.0.0",
     "shortid": "^2.2.16",
     "socket.io": "^4.7.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "winston": "^3.10.0"
   },
   "nodemonConfig": {
     "ignore": [
       "src/data/*.json"
     ]
+  },
+  "devDependencies": {
+  "chai": "^4.3.8",
+  "mocha": "^10.2.0"
   }
 }

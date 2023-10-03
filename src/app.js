@@ -9,6 +9,7 @@ import configureHandlebars from './config/handlebars.config.js';
 import configurePublicFolder from './config/public.config.js';
 import routes from './routes/index.js';
 import configureSocket from './config/socket.config.js';
+import configureSwagger from './config/swagger.config.js';
 import displayRoutes from 'express-routemap';
 import { MBeautyLogger } from './utils/logger.js';
 
@@ -26,9 +27,11 @@ configureHandlebars(app);
 initializePassport(passport);
 app.use(passport.initialize());
 configurePublicFolder(app);
+configureSwagger(app);
 routes(app);
 
 const PORT = process.env.PORT;
+
 //Server config
 const serverHttp = app.listen(PORT, () => {
     displayRoutes(app);

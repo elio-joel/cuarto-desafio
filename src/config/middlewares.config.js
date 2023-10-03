@@ -5,11 +5,9 @@ import compression from 'express-compression';
 import errorHandler from '../utils/errorHandler/errorHandler.js'
 import { MBeautyRequestLogger } from '../utils/logger.js';
 import { default as jwt } from 'jsonwebtoken';
-import { th } from '@faker-js/faker';
 
 
-
-export function configureMiddlewares(app) {
+export const configureMiddlewares = (app) => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cors({
@@ -23,7 +21,7 @@ export function configureMiddlewares(app) {
   app.use(MBeautyRequestLogger);
 }
 
-export function configurePostMiddlewares(app) {
+export const configurePostMiddlewares = (app) => {
   app.use(errorHandler);
 }
 
