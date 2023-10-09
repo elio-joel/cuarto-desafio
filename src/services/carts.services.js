@@ -103,7 +103,7 @@ class CartService {
             if (user) {
                 if (user.role === 'premium') {
                     if (product.owner.toLowerCase() === user.email.toLowerCase()) {
-                        FloweryCustomError.createError({
+                        CustomError.createError({
                             name: 'addToCart Error',
                             message: 'You cannot add your own products to cart',                    
                             type: EnumErrors.BUSSINESS_RULES_ERROR.type,
@@ -299,7 +299,7 @@ class CartService {
                 if (user) {
                     if (user.role === 'premium') {
                         if (product.owner.toLowerCase() === user.email.toLowerCase()) {
-                            FloweryCustomError.createError({
+                            CustomError.createError({
                                 name: 'addProductsToCart Error',
                                 message: 'You cannot add your own products to cart',                    
                                 type: EnumErrors.BUSSINESS_RULES_ERROR.type,

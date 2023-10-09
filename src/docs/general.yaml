@@ -1,14 +1,14 @@
 tags:
   - name: Products
-    description: Everything about your Flowery 4107 products
+    description: Everything about your MarcelaBeauty products
   - name: Carts
-    description: All methods related to Flowery 4107 shopping carts
+    description: All methods related to MarcelaBeauty shopping carts
 components:
   securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: floweryjwt
+      name: userjwt
   responses:
     BadRequestError:
       description: Bad request error
@@ -34,7 +34,7 @@ components:
                     example: Product with same code already exists
                   recievedParams:
                     type: object
-                    example: {"code": "TUPA355"}
+                    example: {"code": "ALREXI355"}
       status: 400
     UnauthorizedError:
       description: Unauthorized error

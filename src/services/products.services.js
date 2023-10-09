@@ -222,7 +222,7 @@ class ProductService {
             }
             if (user.role === 'premium') {
                 if (product.owner.toLowerCase() !== user.email.toLowerCase()) {
-                    FloweryCustomError.createError({
+                    CustomError.createError({
                         name: 'updateProduct Error',
                         message: 'You are not the owner of this product',                        
                         type: EnumErrors.BUSSINESS_RULES_ERROR.type,
@@ -251,7 +251,7 @@ class ProductService {
             }
             if (user.role === 'premium') {
                 if (product.owner.toLowerCase() !== user.email.toLowerCase()) {
-                    FloweryCustomError.createError({
+                    CustomError.createError({
                         name: 'deleteProduct Error',
                         message: 'You are not the owner of this product',                        
                         type: EnumErrors.BUSSINESS_RULES_ERROR.type,

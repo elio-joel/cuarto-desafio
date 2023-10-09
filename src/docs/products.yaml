@@ -6,7 +6,7 @@ paths:
       tags:
         - Products
       summary: Get All Products
-      description: Get All Products in Flowery 4107 catalog
+      description: Get All Products in Marcela Beauty catalog
       operationId: getAllProducts
       parameters:
         - name: limit
@@ -28,7 +28,7 @@ paths:
           in: query
           schema:
             type: string
-            example: Flores Ornamentales
+            example: Crema corporal
         - name: page
           in: query
           schema:
@@ -98,7 +98,7 @@ paths:
       security:
         - cookieAuth: []    
       summary: Create Product
-      description: Create a new product in Flowery 4107 catalog
+      description: Create a new product in Marcela Beauty catalog
       operationId: createProduct
       requestBody:
         required: true
@@ -173,7 +173,7 @@ paths:
       security:
         - cookieAuth: []    
       summary: Update Product
-      description: Update an existing product in Flowery 4107 catalog
+      description: Update an existing product in Marcela Beauty catalog
       operationId: updateProduct
       parameters:
         - name: productId
@@ -220,7 +220,7 @@ paths:
       security:
         - cookieAuth: []    
       summary: Delete product
-      description: Delete an existing product in Flowery 4107 catalog
+      description: Delete an existing product in Marcela Beauty catalog
       operationId: deleteProduct
       parameters:
         - name: productId
@@ -307,14 +307,14 @@ components:
         category:
           type: string
           description: The category of the product.
-          example: Flores Ornamentales
+          example: Crema corporal
         thumbnails:
           type: array
           description: Array of URLs of product thumbnails.
           items:
             type: string
             description: URLs of product thumbnails.
-            example: https://res.cloudinary.com/djlmqpd2n/image/upload/v1620220003/flowery4107/products/6498f2feb8c8060f32debf0d/6498f2feb8c8060f32debf0d_1.jpg
+            example: [].
   requestBodies:
     newProduct:
       type: object
