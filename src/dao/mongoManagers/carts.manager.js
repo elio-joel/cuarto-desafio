@@ -59,6 +59,27 @@ class CartMongoManager {
       });            
     }
   }
+ 
+  deleteCart = async (cartId) => {
+    try {
+      const cart = await this.cartModel.findByIdAndDelete(cartId);
+      if (!cart) {
+        CustomError.createError({
+          name: 'deleteCart Error',
+          message: 'Cart not found',
+          type: EnumErrors.DATABASE_ERROR.type,
+          statusCode: EnumErrors.DATABASE_ERROR.statusCode
+        });        
+      }
+    } catch (error) {
+      CustomError.createError({
+        name: 'deleteCart Error',
+        message: `Failed to delete cart: ${error.message}`,
+        type: EnumErrors.DATABASE_ERROR.type,
+        statusCode: EnumErrors.DATABASE_ERROR.statusCode
+      });            
+    }
+  }
 }
 
 export default CartMongoManager;

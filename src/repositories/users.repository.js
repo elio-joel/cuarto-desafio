@@ -12,4 +12,13 @@ export default class UsersRepository {
     const updatedUser = await this.dao.updateUser(userId, updatedFields);
     return updatedUser;
   };
+  createUser = async (user) => {
+    const newUser = await this.dao.createUser(user);
+    return newUser;
+  };
+
+  deleteUserByEmail = async (email) => {
+    const deletedUser = await this.dao.deleteUserByEmail(email);
+    return deletedUser;
+  };
 }

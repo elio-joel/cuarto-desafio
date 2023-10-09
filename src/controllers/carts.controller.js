@@ -81,7 +81,7 @@ const checkoutCart = async (req, res, next) => {
     const cartId = req.params.cartId;
     try {
         const purchaseCartResult = await cartService.checkoutCart(cartId, req.user.email);
-        res.status(201).send({ status: 1, msg: 'Cart successfully purchased', purchaseCartResult: purchaseCartResult });
+        res.status(200).send({ status: 1, msg: 'Cart successfully emptied', cart: emptiedCart });
     } catch (error) {
         next(error);
     }

@@ -241,12 +241,7 @@ class CartService {
             await this.cartRepository.updateCartProducts(cartId, cart.products);
             return cart;
         } catch (error) {
-            CustomError.createError({
-                name: 'emptyCart Error',
-                message: `Failed to empty cart: ${error.message}`,                        
-                type: EnumErrors.BUSSINESS_TRANSACTION_ERROR.type,
-                statusCode: EnumErrors.BUSSINESS_TRANSACTION_ERROR.statusCode
-            });                    
+            throw error;                  
         }
     }
 

@@ -48,6 +48,35 @@ class UserMongoManager {
       });
     }
   };
+  createUser = async (user) => {
+    try {
+      const newUser = await this.usersModel.create(user);
+      return newUser;
+    } catch (error) {
+      CustomError.createError({
+        name: "createUser Error",
+        message: `Failed to create user: ${error.message}`,
+        type: EnumErrors.DATABASE_ERROR.type,
+        statusCode: EnumErrors.DATABASE_ERROR.statusCode,
+      });
+    }
+  };
+
+  deleteUserByEmail = async (email) => {
+    try {
+      const deletedUser = await this.usersModel.findOneAndDelete({
+        email: { $regex: new RegExp(`^${email}$`, "i") },
+      });
+      return deletedUser;
+    } catch (error) {
+      CustomError.createError({
+        name: "deleteUserByEmail Error",
+        message: `Failed to delete user: ${error.message}`,
+        type: EnumErrors.DATABASE_ERROR.type,
+        statusCode: EnumErrors.DATABASE_ERROR.statusCode,
+      });
+    }
+  };
 }
 
 export default UserMongoManager;
