@@ -1,6 +1,6 @@
-import { userServices } from "../services/user.services.js";
+import { UserService } from "../services/user.services.js";
 
-const userServices = new UserServices();
+const userService = new UserService();
 
 const register = (req, res) => {
   res.send({ status: 1, msg: "New User registered", user: req.user });

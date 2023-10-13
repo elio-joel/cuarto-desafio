@@ -10,6 +10,11 @@ const usersSchema = new mongoose.Schema({
     password: { type: String },
     role: { type: String, enum: ['admin', 'user'], default: 'user' },
     cart: { type: mongoose.Schema.Types.ObjectId, ref: 'carts', required: false },
+    documents: [{
+    name: { type: String },
+    referenceUrl: { type: String }
+}],
+    lastConnection: { type: Date },
 })
 
 const UsersModel = mongoose.model(usersCollection, usersSchema);

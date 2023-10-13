@@ -5,6 +5,8 @@ import compression from 'express-compression';
 import errorHandler from '../utils/errorHandler/errorHandler.js'
 import { MBeautyRequestLogger } from '../utils/logger.js';
 import { default as jwt } from 'jsonwebtoken';
+import { UserService } from '../services/user.services.js'
+import { jwtVerify, tokenFromCookieExtractor } from '../utils/utils.js'
 
 
 export const configureMiddlewares = (app) => {
@@ -44,5 +46,35 @@ export const validateResetPasswordToken = (redirectOnError = false) => {
   };
 };
 
+export const jwtFromCookie = async (req, res, next) => {
+  try {
+      const token = tokenFromCookieExtractor(req);
+      if (!token) {
+          return next();
+      }
+      req.user = token;
+      next();
+  } catch (error) {
+      throw error;
+  }
+};
 
+export const setLastConnection = async (req, res, next) => {
+  try {
+      const userService = new UserService();
+      const token = req.user;
+      if (!token) {
+          return next();
+      }
+      const decodedToken = jwtVerify(token);
+      const user = decodedToken.user;
+      if (!user || !user.email || user.email.toLowerCase() === process.env.ADMIN_USER.toLowerCase()) {
+          return next();
+      }
+      await userService.updateLastConnection(user.email);
+      next();
+  } catch (error) {
+      throw error;
+  }
+};
 

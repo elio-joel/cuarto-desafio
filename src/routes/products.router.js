@@ -28,7 +28,7 @@ router.get(
 router.post(
   "/",
   authorization("admin", "premium"),
-  uploader.array("thumbnails"),
+  uploader("products").array("thumbnails"),
   productController.addProduct
 );
 
