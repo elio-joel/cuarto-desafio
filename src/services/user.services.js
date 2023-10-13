@@ -92,6 +92,29 @@ class UserService {
                 });
             }
             const newRole = { role: user.role === 'user' ? 'premium' : 'user' };
+            if (newRole.role === 'premium') {
+                if (!user.documents || user.documents.length === 0) {
+                    CustomError.createError({
+                        name: 'togglePremiumFeature Error',
+                        message: 'User has no documents',                        
+                        type: EnumErrors.BUSSINESS_RULES_ERROR.type,
+                        recievedParams: { email },
+                        statusCode: EnumErrors.BUSSINESS_RULES_ERROR.statusCode
+                    });
+                }
+                const requiredDocuments = ['id', 'address', 'bankaccount'];
+                const userDocuments = user.documents.map(document => document.name);
+                const missingDocuments = requiredDocuments.filter(document => !userDocuments.includes(document));
+                if (missingDocuments.length > 0) {
+                    CustomError.createError({
+                        name: 'togglePremiumFeature Error',
+                        message: 'User has missing required documents',
+                        type: EnumErrors.BUSSINESS_RULES_ERROR.type,
+                        recievedParams: { email },
+                        statusCode: EnumErrors.BUSSINESS_RULES_ERROR.statusCode
+                    });
+                }
+            }
             const updatedUser = await this.userRepository.updateUser(user._id, newRole);
             return updatedUser;
         } catch (error) {
@@ -102,6 +125,67 @@ class UserService {
                 statusCode: EnumErrors.DATABASE_ERROR.statusCode
               });             
         }
+    }
+}
+updateLastConnection = async (email) => {
+    try {
+        const user = await this.userRepository.getUserByEmail(email);
+        if (!user) {
+            CustomError.createError({
+                name: 'updateLastConnection Error',
+                message: 'User not found',                        
+                type: EnumErrors.NOT_FOUND_ENTITY_ID_ERROR.type,
+                recievedParams: { email },
+                statusCode: EnumErrors.NOT_FOUND_ENTITY_ID_ERROR.statusCode
+            });
+        }
+        const newLastConnection = { lastConnection: Date.now() };
+        const updatedUser = await this.userRepository.updateUser(user._id, newLastConnection);
+        return updatedUser;
+    } catch (error) {
+        CustomError.createError({
+            name: 'updateLastConnection Error',
+            message: `Failed to update last connection for user: ${error.message}`,
+            type: EnumErrors.DATABASE_ERROR.type,
+            statusCode: EnumErrors.DATABASE_ERROR.statusCode
+          });             
+    }
+}
+
+updateDocuments = async (email, documents) => {
+    try {
+        const user = await this.userRepository.getUserByEmail(email);
+        if (!user) {
+            CustomError.createError({
+                name: 'updateDocuments Error',
+                message: 'User not found',                        
+                type: EnumErrors.NOT_FOUND_ENTITY_ID_ERROR.type,
+                recievedParams: { email },
+                statusCode: EnumErrors.NOT_FOUND_ENTITY_ID_ERROR.statusCode
+            });
+        }
+        if (!Array.isArray(documents) || documents.length === 0) {
+            CustomError.createError({
+                name: 'updateDocuments Error',
+                message: 'Documents not found',                        
+                type: EnumErrors.INVALID_FIELDS_VALUE_ERROR.type,
+                recievedParams: { documents },
+                statusCode: EnumErrors.INVALID_FIELDS_VALUE_ERROR.statusCode
+            });
+        }
+        const newDocuments = documents.map(file => ({ name: file.originalname.split('.')[0].toLowerCase() , referenceUrl: `http://localhost:8080/files/uploads/documents/${file.filename}`}));
+
+        const userDocuments = user.documents || [];
+        const updatedDocuments = { documents: [...userDocuments, ...newDocuments] };
+        const updatedUser = await this.userRepository.updateUser(user._id, updatedDocuments);
+        return updatedUser;
+    } catch (error) {
+        CustomError.createError({
+            name: 'updateDocuments Error',
+            message: `Failed to update documents for user: ${error.message}`,
+            type: EnumErrors.DATABASE_ERROR.type,
+            statusCode: EnumErrors.DATABASE_ERROR.statusCode
+          });             
     }
 }
 
